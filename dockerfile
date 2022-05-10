@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS build
+FROM ubuntu:20.04 AS build
 ARG MODEL
 #shell,rtmp,rtsp,rtsps,http,https,rtp
 EXPOSE 9000/tcp
@@ -29,8 +29,10 @@ RUN apt-get update && \
          libfaac-dev \
          gcc \
          g++ \
-         gdb \
-         libmp4v2-dev && \
+         gdb && \
+	 wget http://archive.ubuntu.com/ubuntu/pool/universe/m/mp4v2/libmp4v2-2_2.0.0~dfsg0-6_amd64.deb && \
+	 wget http://archive.ubuntu.com/ubuntu/pool/universe/m/mp4v2/mp4v2-utils_2.0.0~dfsg0-6_amd64.deb && \
+	 dpkg -i libmp4v2-2_2.0.0~dfsg0-6_amd64.deb && dpkg -i mp4v2-utils_2.0.0~dfsg0-6_amd64.deb && \
          apt-get autoremove -y && \
          apt-get clean -y && \
          wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz -O libsrtp-2.2.0.tar.gz && tar xfv libsrtp-2.2.0.tar.gz && \
@@ -47,7 +49,7 @@ WORKDIR /opt/media/ZLMediaKit/build
 RUN cmake -DCMAKE_BUILD_TYPE=${MODEL} -DENABLE_WEBRTC=true -DENABLE_TESTS=false -DENABLE_API=false .. && \
     make -j8
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ARG MODEL
 
 ADD sources.list /etc/apt/sources.list
@@ -66,8 +68,10 @@ RUN apt-get update && \
          ffmpeg \
          gcc \
          g++ \
-         gdb \
-         libmp4v2-dev && \
+         gdb && \
+	 wget http://archive.ubuntu.com/ubuntu/pool/universe/m/mp4v2/libmp4v2-2_2.0.0~dfsg0-6_amd64.deb && \
+         wget http://archive.ubuntu.com/ubuntu/pool/universe/m/mp4v2/mp4v2-utils_2.0.0~dfsg0-6_amd64.deb && \
+         dpkg -i libmp4v2-2_2.0.0~dfsg0-6_amd64.deb && dpkg -i mp4v2-utils_2.0.0~dfsg0-6_amd64.deb && \
          apt-get autoremove -y && \
          apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*

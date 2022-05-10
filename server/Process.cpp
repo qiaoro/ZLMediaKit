@@ -81,7 +81,15 @@ static int runChildProcess(string cmd, string log_file) {
     char **charpv_params = new char *[params.size() + 1];
     for (int i = 0; i < (int)params.size(); i++) {
         std::string &p = params[i];
+	
+	    string now_time = to_string(time(0));
+	    int pos = p.find("now");
+    	if (pos != p.npos) {
+            p = p.replace(pos, 3, now_time);
+    	}
+
         charpv_params[i] = (char *)p.data();
+	    fprintf(stderr, "\r\n\r\n#### params=%s #####\r\n\r\n", (char *)p.data());
     }
     // EOF: NULL
     charpv_params[params.size()] = NULL;
